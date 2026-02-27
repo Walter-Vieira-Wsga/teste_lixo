@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Relatório do Vendedor</h1>
+<ul>
+    <li>Total de vendas entregues: R$ {{ total_sales }}</li>
+    <li>Total de pedidos: {{ total_orders }}</li>
+    <li>Produtos sem estoque: {{ out_of_stock }}</li>
+    <li>Pagamentos pendentes: R$ {{ pending_payouts }}</li>
+</ul>
+{% endblock %}

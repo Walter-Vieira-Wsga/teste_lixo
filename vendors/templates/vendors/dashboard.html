@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Dashboard</h1>
+<ul>
+    <li>Produtos cadastrados: {{ products_count }}</li>
+    <li>Pedidos recebidos: {{ orders_count }}</li>
+    <li>Total de vendas: R$ {{ total_sales }}</li>
+</ul>
+{% endblock %}

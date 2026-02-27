@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+  <div class="row">
+
+    <!-- COLUNA ESQUERDA – IMAGENS -->
+    <div class="col-md-6">
+
+      {% with main=product.main_image %}
+        {% if main %}
+          <img id="mainProductImage"
+               src="{{ main.image.url }}"
+               class="product-main-image mb-3"
+               alt="{{ product.name }}">
+        {% else %}
+          <img id="mainProductImage"
+               src="https://via.placeholder.com/600x400?text=Sem+Imagem"
+               class="product-main-image mb-3">
+        {% endif %}
+      {% endwith %}
+
+      <!-- MINIATURAS -->
+      <div class="d-flex gap-2 flex-wrap">
+        {% for img in product.images.all %}
+          <img src="{{ img.image.url }}"
+               class="product-thumb {% if img.is_main %}active{% endif %}"
+               onclick="changeMainImage(this)"
+               alt="{{ product.name }}">
+        {% endfor %}
+      </div>
+
+    </div>
+
+    <!-- COLUNA DIREITA – INFORMAÇÕES -->
+    <div class="col-md-6">
+
+      <h2 class="mb-3">{{ product.name }}</h2>
+
+      {% if product.category %}
+        <p class="text-muted">
+          Categoria: {{ product.category.name }}
+        </p>
+      {% endif %}
+
+      <h3 class="text-success mb-3">
+        R$ {{ product.price }}
+      </h3>
+
+      <!-- ESTOQUE -->
+      {% if product.stock > 0 %}
+        <p class="text-success fw-bold">
+          ✔ Em estoque ({{ product.stock }} unidades)
+        </p>
+      {% else %}
+        <p class="text-danger fw-bold">
+          ❌ Produto esgotado
+        </p>
+      {% endif %}
+
+      <hr>
+
+      <p>{{ product.description|linebreaks }}</p>
+
+      <!-- BOTÃO DE COMPRA -->
+      <form method="POST" action="{% url 'carts:update' %}">
+        {% csrf_token %}
+        <input type="hidden" name="product_id" value="{{ product.id }}">
+
+        <button type="submit"
+                class="btn btn-primary btn-lg w-100 mt-4"
+                {% if product.stock == 0 %}disabled{% endif %}>
+          🛒 Adicionar ao Carrinho
+        </button>
+      </form>
+
+    </div>
+
+  </div>
+</div>
+
+
+<!-- PRODUTOS RELACIONADOS -->
+{% if related_products %}
+<hr class="my-5">
+
+<h4 class="mb-4">Produtos relacionados</h4>
+
+<div class="row">
+  {% for p in related_products %}
+    <div class="col-md-3">
+      <div class="card h-100 shadow-sm">
+
+        {% if p.main_image %}
+          <img src="{{ p.main_image.image.url }}"
+               class="card-img-top"
+               style="height:200px; object-fit:cover;">
+        {% endif %}
+
+        <div class="card-body text-center">
+          <h6>{{ p.name }}</h6>
+          <p class="text-success">R$ {{ p.price }}</p>
+
+          <a href="{% url 'products:product_detail' p.slug %}"
+             class="btn btn-outline-primary btn-sm">
+            Ver produto
+          </a>
+        </div>
+
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- JS PARA TROCAR IMAGEM -->
+<script>
+function changeMainImage(thumb) {
+    const mainImage = document.getElementById("mainProductImage");
+    mainImage.src = thumb.src;
+
+    document.querySelectorAll(".product-thumb")
+        .forEach(img => img.classList.remove("active"));
+
+    thumb.classList.add("active");
+}
+</script>
+
+{% endblock %}

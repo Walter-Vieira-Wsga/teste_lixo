@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Checkout</h1>
+<ul>
+    {% for product in cart_items %}
+    <li>{{ product.name }} - R$ {{ product.price }} - {{ product.vendor.company_name }}</li>
+    {% endfor %}
+</ul>
+<p>Total: R$ {{ total }}</p>
+<button class="btn btn-success">Finalizar Compra</button>
+{% endblock %}
